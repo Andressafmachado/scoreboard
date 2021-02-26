@@ -1,17 +1,20 @@
-// src/components/Player.js
 import React from "react";
-import incrementCount from "./Scoreboard";
 
 export default function Player(props) {
-  //   onClick = () => {
-  //     props.updateScores();
-  //   };
+  function handleClick() {
+    // console.log(`Clicked ${props.name}!`);
+    props.incrementScore(props.id);
+  }
+
+  function resetClick() {
+    props.resetScore(props.id);
+  }
 
   return (
-    <li className="Player">
-      {/* {props.id} */}
-      {props.name} (score: {props.score})
-      <button onClick={incrementCount}>Like</button>
-    </li>
+    <div>
+      {props.name} - score: {props.score}
+      <button onClick={handleClick}>+</button>
+      <button onClick={resetClick}>reset</button>
+    </div>
   );
 }

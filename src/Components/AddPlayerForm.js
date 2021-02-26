@@ -1,17 +1,29 @@
-// // src/components/AddPlayerForm.js
-// import React, { useState } from "react";
+import React, { useState } from "react";
 
-// export default function AddPlayerForm = (props) => {
-//   const [name, steName] = useState ("");
-//   const [age, setAge] = useState(0)
+export default function AddPlayerForm(props) {
+  const [name, set_name] = useState("");
 
-//   const onSubmitForm = event => {
-//     event.preventDefault()
+  function submit(event) {
+    event.preventDefault();
+    props.addPlayer(name);
 
-//     props.onCreateNewPlayer(name)
-//     }
+    set_name("");
+  }
 
-//   return (
-//     <div className="AddPlayerForm">[TODO: the form to add a new player]</div>
-//   );
-// }
+  return (
+    <div>
+      <form onSubmit={submit}>
+        <p>
+          New player:{" "}
+          <input
+            value={name}
+            type="text"
+            placeholder="Name"
+            onChange={(event) => set_name(event.target.value)}
+          />
+          <button>Add</button>
+        </p>
+      </form>
+    </div>
+  );
+}

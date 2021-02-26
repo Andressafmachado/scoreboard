@@ -1,7 +1,7 @@
 // src/components/Scoreboard.js
 import React, { useState } from "react";
 import Player from "./Player";
-// import AddPlayerForm from "./AddPlayerForm";
+import AddPlayerForm from "./AddPlayerForm";
 
 export default function Scoreboard() {
   const [players, set_players] = useState([
@@ -19,14 +19,91 @@ export default function Scoreboard() {
   function compare_score(player_a, player_b) {
     return player_b.score - player_a.score;
   }
+
   function compare_name(playerA, playerB) {
     return playerA.name.localeCompare(playerB.name);
   }
 
-  const players_sorted = [];
-  sort_by === "score"
-    ? [...players].sort(compare_score)
-    : [...players].sort(compare_name);
+  const players_sorted =
+    sort_by === "score"
+      ? [...players].sort(compare_score)
+      : [...players].sort(compare_name);
+
+  // incrementScore -> callback prop
+  function incrementScore(playerId) {
+    // console.log("I AM A CALLBACK PROP", playerId);
+    const updatedPlayers = players.map((player) => {
+      // console.log("PLAYER:", player);
+      if (player.id === playerId) {
+        // console.log("UPDATE THIS PLAYER");
+        // player.score = player.score + 1;
+        // return player;
+        return { ...player, score: player.score + 1 };
+      } else {
+        // console.log("DONT DO ANYTHING");
+        return player;
+      }
+    });
+    set_players(updatedPlayers);
+  }
+
+  function resetScore(playerId) {
+    const resetPlayers = players.map((player) => {
+      if (player.id === playerId) {
+        return { ...player, score: (player.score = 0) };
+      } else {
+        // console.log("DONT DO ANYTHING");
+        return player;
+      }
+    });
+    set_players(resetPlayers);
+  }
+
+  // const resetScores = () => {
+  //   const new_players_array = players.map((player) => ({
+  //     // but first copying over the player object's data
+  //     ...player,
+  //     // and then overriding the score property to be incremented
+  //     score: 0,
+  //   }));
+
+  //   set_players(new_players_array);
+  // };
+
+  // const randomizeScores = () => {
+  //   const new_players_array = players.map((player) => ({
+  //     // but first copying over the player object's data
+  //     ...player,
+  //     // and then overriding the score property to be incremented
+  //     score: Math.floor(Math.random() * 101),
+  //   }));
+
+  //   set_players(new_players_array);
+  // };
+
+  const addPlayer = (name) => {
+    console.log("Let's add a new player with the name:", name);
+    set_players([
+      ...players,
+      {
+        id: Math.random(), // we should find a better way of defining the id but this is fine for now
+        name,
+        score: 0,
+      },
+    ]);
+  };
+
+  // const onCreateNewPlayer = (newPlayerName) => {
+  //   // Now I have the name of the new player,
+  //   // we need to create a player object from this:
+
+  //   const newPlayer = { id: players.length + 1, name: newPlayerName, score: 0 };
+  //   console.log("new player ready??", newPlayer);
+
+  //   const updatedPlayers = [...players, newPlayer];
+  //   set_players(updatedPlayers);
+  // };
+  // console.log("players", players);
 
   return (
     <div className="Scoreboard">
@@ -38,7 +115,7 @@ export default function Scoreboard() {
           <option value="name">Sort by name</option>
         </select>
       </p>
-      {players.map((player, index) => {
+      {players_sorted.map((player, index) => {
         return (
           <div>
             <Player
@@ -46,43 +123,15 @@ export default function Scoreboard() {
               id={player.id}
               name={player.name}
               score={player.score}
-              // incrementCount={() => {
-              // const onPlayClick = (id) => {
-              //   const updatedScores = players.map((player) => {
-              //     if (player.id === id) {
-              //       //this is the player to update
-              //       return { ...players, score: player.score + 1 };
-              //     } else {
-              //       //not a player to update
-              //       return player;
-              // }
-              // set_players(updatedScores);
-              //   });
-              // };
-              // }}
+              incrementScore={incrementScore}
+              resetScore={resetScore}
             />
           </div>
         );
       })}
+      <div>
+        <AddPlayerForm addPlayer={addPlayer} />
+      </div>
     </div>
   );
 }
-
-// function compare_name(player_a, player_b) {
-//   if (player_b.name.toUpperCase() < player_a.name.toUpperCase()) {
-//     return 1;
-//   } else if (player_b.name.toUpperCase() === player_a.name.toUpperCase()) {
-//     return 0;
-//   } else {
-//     return -1;
-//   }
-// }
-// // const players_sorted = [...players].sort(compare_score);
-// let players_sorted = [];
-// if (sort_by === "score") {
-//   players_sorted = [...players].sort(compare_score);
-//   // return players_sorted
-// } else {
-//   players_sorted = [...players].sort(compare_name);
-//   // return players_sorted
-// }
